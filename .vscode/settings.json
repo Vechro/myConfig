@@ -1,24 +1,58 @@
 {
-    "editor.fontFamily": "'Roboto Mono', Consolas, 'Courier New', monospace",
-    "diffEditor.renderSideBySide": true,
-    "git.autofetch": true,
-    "window.zoomLevel": 0,
-    "gitlens.hovers.currentLine.over": "line",
-    "explorer.confirmDelete": false,
-    "terminal.integrated.shell.windows": "C:\\Program Files\\PowerShell\\6\\pwsh.exe",
-    "gitlens.views.repositories.files.layout": "tree",
-    "editor.smoothScrolling": true,
-    "editor.minimap.enabled": false,
-    "files.associations": {
-        "*.svelte": "html",
-        "*.svg": "html"
+    "[javascript]": {
+        "editor.defaultFormatter": "dbaeumer.vscode-eslint"
     },
+    "diffEditor.renderSideBySide": true,
+    "editor.fontFamily": "'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace",
+    "editor.fontSize": 14.5,
+    "editor.lineHeight": 22,
+    "editor.minimap.enabled": false,
+    "editor.smoothScrolling": true,
+    "editor.suggestSelection": "first",
+    "editor.wordWrapColumn": 200,
     "eslint.format.enable": true,
     "eslint.lintTask.enable": true,
     "eslint.options": {
         "resolvePluginsRelativeTo": "C:\\Users\\Vechro\\AppData\\Roaming\\npm\\node_modules"
     },
-    "[javascript]": {
-        "editor.defaultFormatter": "dbaeumer.vscode-eslint"
-    }
+    "eslint.probe": [
+        "javascript",
+        "javascriptreact",
+        "typescript",
+        "typescriptreact",
+        "html",
+        "vue",
+        "markdown",
+    ],
+    "eslint.validate": [
+        "json"
+    ],
+    "explorer.confirmDelete": false,
+    "files.associations": {
+        "*.svelte": "html",
+        "*.svg": "html"
+    },
+    "files.exclude": {
+        "**/.classpath": true,
+        "**/.factorypath": true,
+        "**/.project": true,
+        "**/.settings": true
+    },
+    "git.autofetch": true,
+    "git.confirmSync": false,
+    "glsl-canvas.refreshOnChange": false,
+    "glsl-canvas.refreshOnSave": true,
+    "glsl-canvas.uniforms": {
+        "u_radius": 0.5,
+        "u_test": [
+            1,
+            1,
+            1
+        ]
+    },
+    "terminal.integrated.shell.windows": "C:\\Program Files\\PowerShell\\6\\pwsh.exe",
+    "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
+    "webhint.enableTelemetry": "disabled",
+    "window.zoomLevel": 0,
+    "workbench.colorTheme": "Solarized Light"
 }

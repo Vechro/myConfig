@@ -1,14 +1,14 @@
 {
 	"extends": ["eslint:recommended", "plugin:promise/recommended", "plugin:node/recommended", "plugin:import/errors", "plugin:import/warnings"],
-	"plugins": ["github", "promise"],
-	"env": {
+	"plugins": ["github", "promise", "json"],
+	"env": { 
 		"node": true,
 		"browser": true,
 		"es2020": true
 	},
 	"parserOptions": {
 		"ecmaVersion": 2020,
-		"ecmaFeatures": {
+		"ecmaFeatures": { 
             "impliedStrict": true
         }
 	},
@@ -37,8 +37,8 @@
         "callback-return": ["error", [
             "callback",
             "cb",
-            "next"]
-        ],
+            "next"
+        ]],
         "camelcase": ["error", {
             "properties": "always"
         }],
@@ -246,7 +246,7 @@
             "words": true,
             "nonwords": false
         }],
-        "strict": ["error", "never"], // We are using alwaysStrict=true as a compiler option of TS
+        "strict": ["error", "never"],
         "switch-colon-spacing": ["error", { "after" : true, "before" : false }],
         "template-curly-spacing": "error",
         "use-isnan": "error",
@@ -257,21 +257,5 @@
         "wrap-iife": ["error", "outside"],
         "wrap-regex": "error",
         "yoda": ["error", "never"]
-		/*
-        "@typescript-eslint/class-name-casing": "error",
-        "@typescript-eslint/explicit-member-accessibility": "error",
-        "@typescript-eslint/interface-name-prefix": [ "error", "always" ],
-        "@typescript-eslint/member-delimiter-style": "error",
-        "@typescript-eslint/member-naming": "error",
-        "@typescript-eslint/no-angle-bracket-type-assertion": "error",
-        "@typescript-eslint/no-array-constructor": "error",
-        "@typescript-eslint/no-namespace": "error",
-        "@typescript-eslint/no-parameter-properties": "error",
-        "@typescript-eslint/no-triple-slash-reference": "error",
-        "@typescript-eslint/no-unused-vars": "off",
-        "@typescript-eslint/no-use-before-define": "error",
-        "@typescript-eslint/prefer-namespace-keyword": "error",
-		"@typescript-eslint/type-annotation-spacing": "error"
-		*/
 	}
 }

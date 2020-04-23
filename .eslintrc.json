@@ -1,11 +1,10 @@
 {
-	"extends": ["eslint:recommended", "plugin:promise/recommended", "plugin:node/recommended"],
+	"extends": ["eslint:recommended", "plugin:promise/recommended", "plugin:node/recommended", "plugin:import/errors", "plugin:import/warnings"],
 	"plugins": ["github", "promise"],
 	"env": {
 		"node": true,
 		"browser": true,
-		"es2020": true,
-		"jquery": true
+		"es2020": true
 	},
 	"parserOptions": {
 		"ecmaVersion": 2020,
@@ -257,8 +256,8 @@
         "vars-on-top": "off",
         "wrap-iife": ["error", "outside"],
         "wrap-regex": "error",
-        "yoda": ["error", "never"],
-
+        "yoda": ["error", "never"]
+		/*
         "@typescript-eslint/class-name-casing": "error",
         "@typescript-eslint/explicit-member-accessibility": "error",
         "@typescript-eslint/interface-name-prefix": [ "error", "always" ],
@@ -272,6 +271,7 @@
         "@typescript-eslint/no-unused-vars": "off",
         "@typescript-eslint/no-use-before-define": "error",
         "@typescript-eslint/prefer-namespace-keyword": "error",
-        "@typescript-eslint/type-annotation-spacing": "error"
+		"@typescript-eslint/type-annotation-spacing": "error"
+		*/
 	}
 }

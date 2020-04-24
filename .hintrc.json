@@ -1,3 +1,11 @@
 {
-    "extends": ["web-recommended"]
+    "extends": [
+        "web-recommended"
+    ],
+    "browserslist": [
+        "last 1 Chrome version",
+        "last 1 ChromeAndroid version",
+        "last 1 Firefox version",
+        "last 1 FirefoxAndroid version"
+    ]
 }

@@ -2,6 +2,9 @@
     "[javascript]": {
         "editor.defaultFormatter": "dbaeumer.vscode-eslint"
     },
+    "css.validate": false,
+    "less.validate": false,
+    "scss.validate": false,
     "diffEditor.renderSideBySide": true,
     "editor.fontFamily": "'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace",
     "editor.fontSize": 14.5,

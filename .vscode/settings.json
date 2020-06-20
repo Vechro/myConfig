@@ -35,18 +35,11 @@
         "*.svelte": "html",
         "*.svg": "html"
     },
-    "files.exclude": {
-        "**/.classpath": true,
-        "**/.factorypath": true,
-        "**/.project": true,
-        "**/.settings": true
-    },
     "git.autofetch": true,
     "git.confirmSync": false,
     "terminal.integrated.shell.windows": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
     "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
     "webhint.enableTelemetry": "disabled",
-    "window.zoomLevel": 0,
     "workbench.colorTheme": "Solarized Light",
     "editor.detectIndentation": false,
     "bracket-pair-colorizer-2.colors": [

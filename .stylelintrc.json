@@ -2,17 +2,16 @@
     "extends": "stylelint-config-standard",
     "rules": {
         "indentation": 4,
-        "number-leading-zero": "always",
+        "number-leading-zero": "never",
         "unit-blacklist": [
             "cm",
             "mm",
             "q",
             "in",
             "pc",
-            "pt",
-            "px"
+            "pt"
         ],
-        "selector-list-comma-newline-after": "never-multi-line",
+        "selector-list-comma-newline-after": "always",
         "no-missing-end-of-source-newline": null
     }
 }

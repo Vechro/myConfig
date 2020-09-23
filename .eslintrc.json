@@ -22,6 +22,7 @@
   "parser": "espree",
   "parserOptions": {
     "ecmaVersion": 2020,
+    "sourceType": "module",
     "ecmaFeatures": {
       "impliedStrict": true
     }
@@ -51,12 +52,7 @@
     "array-element-newline": [
       "error",
       {
-        "ArrayExpression": {
-          "minItems": 4
-        },
-        "ArrayPattern": {
-          "minItems": 4
-        }
+        "minItems": 4
       }
     ],
     "accessor-pairs": "off",
@@ -148,7 +144,7 @@
     "id-match": "off",
     "indent": [
       "error",
-      4,
+      2,
       {
         "SwitchCase": 1,
         "VariableDeclarator": 1
@@ -431,6 +427,14 @@
     "yoda": [
       "error",
       "never"
+    ],
+    // Node
+    "node/no-unsupported-features/es-syntax": [
+      "error",
+      {
+        "version": ">=12.14.1",
+        "ignores": ["module"]
+      }
     ],
     // React
     "react-hooks/rules-of-hooks": "error",

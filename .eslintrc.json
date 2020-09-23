@@ -1,15 +1,18 @@
 {
-  // npm i --save-dev eslint eslint-plugin-promise eslint-plugin-node eslint-plugin-import eslint-plugin-github
+  // npm i --save-dev eslint eslint-plugin-promise eslint-plugin-node eslint-plugin-import eslint-plugin-github eslint-plugin-react eslint-plugin-react-hooks
   "extends": [
     "eslint:recommended",
     "plugin:promise/recommended",
     "plugin:node/recommended",
     "plugin:import/errors",
-    "plugin:import/warnings"
+    "plugin:import/warnings",
+    "plugin:react/recommended"
   ],
   "plugins": [
     "github",
-    "promise"
+    "promise",
+    "react",
+    "react-hooks"
   ],
   "env": {
     "node": true,
@@ -428,6 +431,9 @@
     "yoda": [
       "error",
       "never"
-    ]
+    ],
+    // React
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn"
   }
 }

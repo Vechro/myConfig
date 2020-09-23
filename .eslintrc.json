@@ -433,7 +433,7 @@
       "error",
       {
         "version": ">=12.14.1",
-        "ignores": ["module"]
+        "ignores": ["modules"]
       }
     ],
     // React

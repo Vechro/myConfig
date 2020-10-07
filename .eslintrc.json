@@ -1,5 +1,5 @@
 {
-  // npm i --save-dev eslint eslint-plugin-promise eslint-plugin-node eslint-plugin-import eslint-plugin-github eslint-plugin-react eslint-plugin-react-hooks
+  // npm i -D eslint eslint-plugin-promise eslint-plugin-node eslint-plugin-import eslint-plugin-github eslint-plugin-react eslint-plugin-react-hooks eslint-plugin-unicorn
   "extends": [
     "eslint:recommended",
     "plugin:promise/recommended",
@@ -12,7 +12,8 @@
     "github",
     "promise",
     "react",
-    "react-hooks"
+    "react-hooks",
+    "unicorn"
   ],
   "env": {
     "node": true,
@@ -168,7 +169,13 @@
         "exceptAfterSingleLine": true
       }
     ],
-    "max-len": "off",
+    "max-len": [
+      "error",
+      {
+        "code": 100,
+        "comments": 65
+      }
+    ],
     "max-nested-callbacks": [
       "error",
       4
@@ -428,16 +435,124 @@
       "error",
       "never"
     ],
-    // Node
+    "import/no-unresolved": 2,
+    "import/named": 2,
+    "import/default": 2,
+    "import/namespace": 2,
+    "import/no-restricted-paths": 2,
+    "import/no-absolute-path": 2,
+    "import/no-dynamic-require": 2,
+    "import/no-internal-modules": 0,
+    "import/no-webpack-loader-syntax": 2,
+    "import/no-self-import": 2,
+    "import/no-cycle": 2,
+    "import/no-useless-path-segments": 2,
+    "import/no-relative-parent-imports": 0,
+    "import/no-unused-modules": 2,
+    "import/export": 2,
+    "import/no-named-as-default": 2,
+    "import/no-named-as-default-member": 2,
+    "import/no-deprecated": 2,
+    "import/no-extraneous-dependencies": 2,
+    "import/no-mutable-exports": 2,
+    "import/unambiguous": 0,
+    "import/no-commonjs": 2,
+    "import/no-amd": 2,
+    "import/no-nodejs-modules": 2,
+    "import/first": 2,
+    "import/exports-last": 0,
+    "import/no-duplicates": 2,
+    "import/no-namespace": 2,
+    "import/extensions": [
+      2,
+      "ignorePackages"
+    ],
+    "import/order": 2,
+    "import/newline-after-import": 2,
+    "import/prefer-default-export": 0,
+    "import/max-dependencies": 0,
+    "import/no-unassigned-import": 2,
+    "import/no-named-default": 2,
+    "import/no-default-export": 2,
+    "import/no-named-export": 0,
+    "import/no-anonymous-default-export": 2,
+    "import/group-exports": 0,
+    "import/dynamic-import-chunkname": 2,
     "node/no-unsupported-features/es-syntax": [
       "error",
       {
-        "version": ">=12.14.1",
-        "ignores": ["modules"]
+        "version": ">=12.0.0",
+        "ignores": [
+          "modules"
+        ]
       }
     ],
-    // React
     "react-hooks/rules-of-hooks": "error",
-    "react-hooks/exhaustive-deps": "warn"
+    "react-hooks/exhaustive-deps": "warn",
+    "unicorn/better-regex": 2,
+    "unicorn/catch-error-name": [
+      2,
+      {
+        "name": "err",
+        "caughtErrorsIgnorePattern": "^$"
+      }
+    ],
+    "unicorn/consistent-function-scoping": 2,
+    "unicorn/custom-error-definition": 2,
+    "unicorn/error-message": 2,
+    "unicorn/escape-case": 2,
+    "unicorn/expiring-todo-comments": 0,
+    "unicorn/explicit-length-check": 2,
+    "unicorn/filename-case": [
+      2,
+      {
+        "case": "kebabCase"
+      }
+    ],
+    "unicorn/import-index": 0,
+    "unicorn/new-for-builtins": 2,
+    "unicorn/no-abusive-eslint-disable": 2,
+    "unicorn/no-array-instanceof": 2,
+    "unicorn/no-console-spaces": 2,
+    "unicorn/no-fn-reference-in-iterator": 0,
+    "unicorn/no-hex-escape": 2,
+    "unicorn/no-keyword-prefix": 2,
+    "unicorn/no-nested-ternary": 2,
+    "unicorn/no-new-buffer": 2,
+    "unicorn/no-null": 0,
+    "unicorn/no-object-as-default-parameter": 2,
+    "unicorn/no-process-exit": 2,
+    "unicorn/no-reduce": 0,
+    "unicorn/no-unreadable-array-destructuring": 2,
+    "unicorn/no-unsafe-regex": 2,
+    "unicorn/no-unused-properties": 2,
+    "unicorn/no-useless-undefined": 0,
+    "unicorn/no-zero-fractions": 2,
+    "unicorn/number-literal-case": 2,
+    "unicorn/prefer-add-event-listener": 2,
+    "unicorn/prefer-array-find": 2,
+    "unicorn/prefer-dataset": 2,
+    "unicorn/prefer-event-key": 2,
+    "unicorn/prefer-flat-map": 2,
+    "unicorn/prefer-includes": 2,
+    "unicorn/prefer-modern-dom-apis": 2,
+    "unicorn/prefer-negative-index": 2,
+    "unicorn/prefer-node-append": 2,
+    "unicorn/prefer-node-remove": 2,
+    "unicorn/prefer-number-properties": 2,
+    "unicorn/prefer-optional-catch-binding": 2,
+    "unicorn/prefer-query-selector": 2,
+    "unicorn/prefer-reflect-apply": 2,
+    "unicorn/prefer-replace-all": 2,
+    "unicorn/prefer-set-has": 2,
+    "unicorn/prefer-spread": 2,
+    "unicorn/prefer-starts-ends-with": 2,
+    "unicorn/prefer-string-slice": 2,
+    "unicorn/prefer-text-content": 2,
+    "unicorn/prefer-trim-start-end": 2,
+    "unicorn/prefer-type-error": 2,
+    "unicorn/prevent-abbreviations": 0,
+    "unicorn/sring-content": 0,
+    "unicorn/throw-new-error": 2
   }
 }

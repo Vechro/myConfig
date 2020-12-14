@@ -22,7 +22,9 @@
             // Put settings here that you want to apply to all profiles.
             "colorScheme": "Colors That Pop",
             "fontFace": "Cascadia Code PL",
-            "antialiasingMode": "cleartype"
+            // Must be grayscale for optimal powerline character rendering
+            "antialiasingMode": "grayscale",
+            "padding": "8, 8, 8, 4"
         },
         "list": [
             {
@@ -83,7 +85,7 @@
             "brightBlue": "#99c6ca",
             "brightPurple": "#d3869b",
             "brightCyan": "#7ec16e",
-            "brightWhite": "#ebdbb2"
+            "brightWhite": "#f9f5d7"
         }
     ],
     // Add custom keybindings to this array.

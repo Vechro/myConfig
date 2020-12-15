@@ -2,6 +2,9 @@ Function dial {
   Invoke-Expression "sshfs-win svc \sshfs.kr\root@vech.ro!22 X:"
 }
 
+# Open current directory in explorer
+Set-PSReadLineKeyHandler -Key Ctrl+e -ScriptBlock { Invoke-Item . }
+
 Import-Module posh-git
 
 $script:bg = [Console]::BackgroundColor;
@@ -90,12 +93,14 @@ function Write-PromptGit {
 
 function Reference {
   # Powerline character reference
-  "                                     "
+  Write-Host "                                     "
 }
 
 function prompt {
   $script:last = $?;
   $script:first = $true;
+
+  # Write-Host "$(((H)[-1].EndExecutionTime - (H)[-1].StartExecutionTime).Milliseconds) ms" -NoNewline -ForegroundColor Gray
 
   Write-PromptVirtualEnv
   Write-PromptDir

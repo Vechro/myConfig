@@ -24,7 +24,8 @@
             "fontFace": "Cascadia Code PL",
             // Must be grayscale for optimal powerline character rendering
             "antialiasingMode": "grayscale",
-            "padding": "8, 8, 8, 4"
+            "padding": "8, 8, 8, 4",
+            "fontWeight": "medium"
         },
         "list": [
             {

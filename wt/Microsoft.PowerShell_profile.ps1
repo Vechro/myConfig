@@ -1,4 +1,3 @@
-
 # Tests if given command exists
 # Adapted from https://devblogs.microsoft.com/scripting/use-a-powershell-function-to-see-if-a-command-exists/
 Function Test-CommandExists ([String] $command) {
@@ -8,6 +7,8 @@ Function Test-CommandExists ([String] $command) {
   Catch { $false }
   Finally { $ErrorActionPreference = $oldPreference }
 }
+
+New-Alias which get-command
 
 Function dial {
   Invoke-Expression "sshfs-win svc \sshfs.kr\root@vech.ro!22 X:"
@@ -49,8 +50,6 @@ else {
   }
 }
 
-
-
 # Open given directory in explorer, defaults to current directory (pipelineable)
 Function open {
   [CmdletBinding()]
@@ -61,13 +60,14 @@ Function open {
   Split-Path -Path $Dir | Invoke-Item
 }
 
+# Load posh-git
+Import-Module posh-git
+
 # Open current directory in explorer
 Set-PSReadLineKeyHandler -Key Ctrl+e -ScriptBlock { Invoke-Item . }
 
 # The Windows terminal does not use UTF-8 by default, the following line changes that
 chcp 65001
-
-Import-Module posh-git
 
 $script:bg = [Console]::BackgroundColor;
 $script:first = $true;

@@ -17,6 +17,7 @@
     // Each one of them will appear in the 'New Tab' dropdown,
     //   and can be invoked from the commandline with `wt.exe -p xxx`
     // To learn more about profiles, visit https://aka.ms/terminal-profile-settings
+    "startOnUserLogin": false,
     "profiles": {
         "defaults": {
             // Put settings here that you want to apply to all profiles.
@@ -24,8 +25,7 @@
             "fontFace": "Cascadia Code PL",
             // Must be grayscale for optimal powerline character rendering
             "antialiasingMode": "grayscale",
-            "padding": "8, 8, 8, 4",
-            "fontWeight": "medium"
+            "padding": "8, 8, 8, 4"
         },
         "list": [
             {
@@ -33,13 +33,6 @@
                 "guid": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}",
                 "name": "Windows PowerShell",
                 "commandline": "powershell.exe",
-                "hidden": true
-            },
-            {
-                // Make changes here to the cmd.exe profile.
-                "guid": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}",
-                "name": "Command Prompt",
-                "commandline": "cmd.exe",
                 "hidden": true
             },
             {
@@ -59,6 +52,13 @@
                 "hidden": false,
                 "name": "Ubuntu",
                 "source": "Windows.Terminal.Wsl"
+            },
+            {
+                // Make changes here to the cmd.exe profile.
+                "guid": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}",
+                "name": "Command Prompt",
+                "commandline": "cmd.exe",
+                "hidden": false
             }
         ]
     },
@@ -119,7 +119,7 @@
         {
             "command": {
                 "action": "splitPane",
-                "split": "auto",
+                "split": "horizontal",
                 "splitMode": "duplicate"
             },
             "keys": "alt+shift+d"

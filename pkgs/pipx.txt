@@ -1,4 +1,7 @@
+coala
 cpplint
-glitch_this
+glitch-this
+lizard
 meson
+proselint
 scour

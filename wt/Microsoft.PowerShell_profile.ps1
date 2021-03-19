@@ -14,6 +14,29 @@ Function dial {
   Invoke-Expression "sshfs-win svc \sshfs.kr\root@vech.ro!22 X:"
 }
 
+function init-build-tools {
+  cmd.exe /c "call `"C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Auxiliary\Build\vcvars64.bat`" && set > %temp%\vcvars.txt"
+
+  Get-Content "$env:temp\vcvars.txt" | ForEach-Object {
+    if ($_ -match "^(.*?)=(.*)$") {
+      Set-Content "env:\$($matches[1])" $matches[2]
+    }
+  }
+}
+
+
+
+# function runc {
+#   [CmdletBinding()]
+#   Param(
+#     [Parameter(ValueFromPipeline)]
+#     [String] $code
+#   )
+#   Invoke-Expression "clang -o tmp.exe -x c $code"
+#   Invoke-Expression ".\tmp.exe"
+#   Remove-Item tmp.exe
+# }
+
 # Due to iex being a default alias for Invoke-Expression I prefer to use this shorthand
 # because overwriting a default alias can have unwanted effects on external script execution
 Function rex {
@@ -31,19 +54,16 @@ if (Test-CommandExists "glow") {
   Function exh ([String] $Name = "h", [Switch] $UseBrowser) {
     if ($UseBrowser.IsPresent) {
       Invoke-Expression "elixir -e 'import IEx.Helpers; h $Name'" | Out-String | Show-Markdown -UseBrowser
-    }
-    else {
+    } else {
       Invoke-Expression "elixir -e 'import IEx.Helpers; h $Name'" | Out-String | glow - -w 70
     }
   }
-}
-else {
+} else {
   # Prints documentation formatted with native Powershell functions for any Elixir function either in the console or the browser
   Function exh ([String] $Name = "h", [Switch] $UseBrowser) {
     if ($UseBrowser.IsPresent) {
       Invoke-Expression "elixir -e 'import IEx.Helpers; h $Name'" | Out-String | Show-Markdown -UseBrowser
-    }
-    else {
+    } else {
       $text = Invoke-Expression "elixir -e 'import IEx.Helpers; h $Name'" | Out-String -Stream
       $text.Split("\n") | ForEach-Object -Process { $_.Trim() } | Out-String | Show-Markdown
     }
@@ -68,6 +88,9 @@ Set-PSReadLineKeyHandler -Key Ctrl+e -ScriptBlock { Invoke-Item . }
 
 # The Windows terminal does not use UTF-8 by default, the following line changes that
 chcp 65001
+
+# Initialize Build Tools environment variables
+init-build-tools
 
 $script:bg = [Console]::BackgroundColor;
 $script:first = $true;
@@ -94,8 +117,7 @@ function Write-PromptSegment {
 
   if (!$script:first) {
     Write-Host  -NoNewline -BackgroundColor $Background -ForegroundColor $script:bg
-  }
-  else {
+  } else {
     $script:first = $false
   }
 
@@ -112,8 +134,7 @@ function Get-GitBranch {
   $HEAD = Get-Content $(Join-Path $(Get-GitDirectory) HEAD)
   if ($HEAD -like 'ref: refs/heads/*') {
     return $HEAD -replace 'ref: refs/heads/(.*?)', "$1";
-  }
-  else {
+  } else {
     return $HEAD.Substring(0, 8);
   }
 }
@@ -121,8 +142,7 @@ function Get-GitBranch {
 function Write-PromptStatus {
   if ($script:last) {
     Write-PromptSegment ' ✅ ' Green Black
-  }
-  else {
+  } else {
     Write-PromptSegment " ❌ $lastexitcode " Red White
   }
 }
@@ -130,15 +150,14 @@ function Write-PromptStatus {
 function Write-PromptUser {
   if ($global:admin) {
     Write-PromptSegment ' # ADMIN ' Magenta White;
-  }
-  else {
+  } else {
     Write-PromptSegment " $env:USERNAME " Yellow White;
   }
 }
 
 function Write-PromptVirtualEnv {
   if ($env:VIRTUAL_ENV) {
-    Write-PromptSegment " $(split-path $env:VIRTUAL_ENV -leaf) " Cyan Black
+    Write-PromptSegment " $(Split-Path $env:VIRTUAL_ENV -Leaf) " Cyan Black
   }
 }
 

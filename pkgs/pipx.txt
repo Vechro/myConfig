@@ -1,6 +1,7 @@
 coala
 cpplint
 glitch-this
+httpie
 lizard
 meson
 proselint

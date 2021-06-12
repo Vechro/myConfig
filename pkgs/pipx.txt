@@ -1,5 +1,6 @@
 coala
 cpplint
+fonttools
 glitch-this
 httpie
 lizard

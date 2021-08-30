@@ -2,10 +2,8 @@ coala
 cpplint
 fonttools
 glitch-this
-httpie
 jrnl
 lizard
-mathinspector
 meson
 proselint
 rembg

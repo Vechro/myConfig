@@ -11,9 +11,9 @@ Function Test-CommandExists ([String] $command) {
   Finally { $ErrorActionPreference = $oldPreference }
 }
 
-New-Alias which get-command
+New-Alias which Get-Command
 
-Function dial {
+Function Mount-ExternalFileSystem {
   Invoke-Expression "sshfs-win svc \sshfs.kr\root@vech.ro!22 X:"
 }
 
@@ -28,7 +28,7 @@ function Add-BuildTools {
 }
 
 # Credit to https://github.com/rajivharris/Set-PsEnv
-function Set-PSEnv {
+function Set-Env {
   [CmdletBinding(SupportsShouldProcess = $true, ConfirmImpact = 'Low')]
   param()
 
@@ -75,17 +75,6 @@ function Set-PSEnv {
   }
 }
 
-# function runc {
-#   [CmdletBinding()]
-#   Param(
-#     [Parameter(ValueFromPipeline)]
-#     [String] $code
-#   )
-#   Invoke-Expression "clang -o tmp.exe -x c $code"
-#   Invoke-Expression ".\tmp.exe"
-#   Remove-Item tmp.exe
-# }
-
 # Due to iex being a default alias for Invoke-Expression I prefer to use this shorthand
 # because overwriting a default alias can have unwanted effects on external script execution
 Function rex {
@@ -119,20 +108,20 @@ if (Test-CommandExists "glow") {
   }
 }
 
-# Open given directory in explorer, defaults to current directory (pipelineable)
+# Open parent of given directory in explorer
 Function open {
   [CmdletBinding()]
   Param(
-    [Parameter(ValueFromPipeline)]
-    [String] $Dir = "."
+    [Parameter(Mandatory = $true, ValueFromPipeline)]
+    [string] $Path
   )
-  Split-Path -Path $Dir | Invoke-Item
+  Split-Path -Parent $Path | Invoke-Item
 }
 
 # Load posh-git
 Import-Module posh-git
 
-# Open current directory in explorer
+# Open current directory in explorer when pressing Ctrl+E
 Set-PSReadLineKeyHandler -Key Ctrl+e -ScriptBlock { Invoke-Item . }
 
 # The Windows terminal does not use UTF-8 by default, the following line changes that

@@ -14,7 +14,7 @@ Function Test-CommandExists ([String] $command) {
 New-Alias which Get-Command
 
 Function Mount-ExternalFileSystem {
-  Invoke-Expression "sshfs-win svc \sshfs.kr\root@vech.ro!22 X:"
+  Invoke-Expression "sshfs-win svc \sshfs.kr\czar@vech.ro!22 X:"
 }
 
 function Add-BuildTools {
@@ -33,14 +33,14 @@ function Set-Env {
   param()
 
   if ($Global:PreviousDir -eq (Get-Location).Path) {
-    Write-Verbose "Set-PsEnv:Skipping same directory"
+    Write-Verbose "Set-Env: Skipping same directory"
     return
   } else {
     $Global:PreviousDir = (Get-Location).Path
   }
 
   # Return if no env file
-  if (!( Test-Path ".\.env")) {
+  if (!(Test-Path ".\.env")) {
     Write-Verbose "No .env file"
     return
   }
@@ -207,7 +207,7 @@ function Write-PromptGit {
   }
 }
 
-function Reference {
+function Get-PowerlineReference {
   # Powerline character reference
   Write-Host "                                     "
 }

@@ -3,18 +3,25 @@ using namespace System.Management.Automation.Language
 
 # Tests if given command exists
 # Adapted from https://devblogs.microsoft.com/scripting/use-a-powershell-function-to-see-if-a-command-exists/
-Function Test-CommandExists ([String] $command) {
+function Test-CommandExists ([string] $command) {
   $oldPreference = $ErrorActionPreference
   $ErrorActionPreference = 'stop'
-  Try { if (Get-Command $command) { $true } }
-  Catch { $false }
-  Finally { $ErrorActionPreference = $oldPreference }
+  try { if (Get-Command $command) { $true } }
+  catch { $false }
+  finally { $ErrorActionPreference = $oldPreference }
 }
 
 New-Alias which Get-Command
 
-Function Mount-ExternalFileSystem {
-  Invoke-Expression "sshfs-win svc \sshfs.kr\czar@vech.ro!22 X:"
+function Mount-ExternalFileSystem {
+  [CmdletBinding()]
+  param(
+    [Parameter(Mandatory = $true, ValueFromPipeline)]
+    [ValidateRange(0, 65535)]
+    [int]
+    $Port
+  )
+  Invoke-Expression "sshfs-win svc \sshfs.kr\vech.ro!$Port X:"
 }
 
 function Add-BuildTools {
@@ -77,19 +84,19 @@ function Set-Env {
 
 # Due to iex being a default alias for Invoke-Expression I prefer to use this shorthand
 # because overwriting a default alias can have unwanted effects on external script execution
-Function rex {
+function rex {
   Invoke-Expression "iex.bat -S mix"
 }
 
 # Launches iex in separate erlang shell with proper support for UTF-8
-Function wex {
+function wex {
   Invoke-Expression "iex.bat --werl -S mix"
 }
 
 # Defines markdown rendered Elixir help depending on if you have glow installed or not
 if (Test-CommandExists "glow") {
   # Prints documentation formatted with Glow for any Elixir function either in the console or the browser
-  Function exh ([String] $Name = "h", [Switch] $UseBrowser) {
+  function exh ([string] $Name = "h", [switch] $UseBrowser) {
     if ($UseBrowser.IsPresent) {
       Invoke-Expression "elixir -e 'import IEx.Helpers; h $Name'" | Out-String | Show-Markdown -UseBrowser
     } else {
@@ -98,7 +105,7 @@ if (Test-CommandExists "glow") {
   }
 } else {
   # Prints documentation formatted with native Powershell functions for any Elixir function either in the console or the browser
-  Function exh ([String] $Name = "h", [Switch] $UseBrowser) {
+  function exh ([string] $Name = "h", [switch] $UseBrowser) {
     if ($UseBrowser.IsPresent) {
       Invoke-Expression "elixir -e 'import IEx.Helpers; h $Name'" | Out-String | Show-Markdown -UseBrowser
     } else {
@@ -109,9 +116,9 @@ if (Test-CommandExists "glow") {
 }
 
 # Open parent of given directory in explorer
-Function open {
+function open {
   [CmdletBinding()]
-  Param(
+  param(
     [Parameter(Mandatory = $true, ValueFromPipeline)]
     [string] $Path
   )
@@ -225,7 +232,7 @@ function prompt {
   Write-PromptFancyEnd
 
   # Load .env if there is one.
-  Set-PSEnv
+  Set-Env
 
   return ' '
 }

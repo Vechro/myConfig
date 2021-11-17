@@ -125,11 +125,12 @@ function open {
   Split-Path -Parent $Path | Invoke-Item
 }
 
-# Load posh-git
 Import-Module posh-git
 
 # Open current directory in explorer when pressing Ctrl+E
 Set-PSReadLineKeyHandler -Key Ctrl+e -ScriptBlock { Invoke-Item . }
+
+Set-PSReadLineOption -EditMode Windows -PredictionSource History -PredictionViewStyle ListView
 
 # The Windows terminal does not use UTF-8 by default, the following line changes that
 # chcp 65001

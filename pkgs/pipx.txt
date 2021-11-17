@@ -1,3 +1,4 @@
+black
 coala
 cpplint
 fonttools
@@ -5,7 +6,9 @@ glitch-this
 jrnl
 lizard
 meson
+poetry
 proselint
+pywhat
 rembg
 scour
 srt3

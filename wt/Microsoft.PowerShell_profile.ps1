@@ -1,6 +1,9 @@
 using namespace System.Management.Automation
 using namespace System.Management.Automation.Language
 
+Import-Module posh-git
+Import-Module PSReadLine
+
 # Tests if given command exists
 # Adapted from https://devblogs.microsoft.com/scripting/use-a-powershell-function-to-see-if-a-command-exists/
 function Test-CommandExists ([string] $command) {
@@ -11,17 +14,19 @@ function Test-CommandExists ([string] $command) {
   finally { $ErrorActionPreference = $oldPreference }
 }
 
-New-Alias which Get-Command
+New-Alias which Get-Command -Option ReadOnly
 
 function Mount-ExternalFileSystem {
   [CmdletBinding()]
   param(
-    [Parameter(Mandatory = $true, ValueFromPipeline)]
+    [string]
+    $Address = "vech.ro",
+    [Parameter(Mandatory, Position = 0)]
     [ValidateRange(0, 65535)]
     [int]
     $Port
   )
-  Invoke-Expression "sshfs-win svc \sshfs.kr\vech.ro!$Port X:"
+  Invoke-Expression "sshfs-win svc \sshfs.kr\$Address!$Port X:"
 }
 
 function Add-BuildTools {
@@ -36,7 +41,7 @@ function Add-BuildTools {
 
 # Credit to https://github.com/rajivharris/Set-PsEnv
 function Set-Env {
-  [CmdletBinding(SupportsShouldProcess = $true, ConfirmImpact = 'Low')]
+  [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Low')]
   param()
 
   if ($Global:PreviousDir -eq (Get-Location).Path) {
@@ -116,30 +121,31 @@ if (Test-CommandExists "glow") {
 }
 
 # Open parent of given directory in explorer
-function open {
+Set-Alias open Open-Directory -Option ReadOnly
+function Open-Directory {
   [CmdletBinding()]
   param(
-    [Parameter(Mandatory = $true, ValueFromPipeline)]
+    [Parameter(Mandatory, ValueFromPipeline)]
     [string] $Path
   )
-  Split-Path -Parent $Path | Invoke-Item
+  if ((Get-Item $Path) -is [System.IO.FileInfo]) {
+    Split-Path $Path | Invoke-Item
+  } else {
+    Invoke-Item $Path
+  }
 }
 
-Import-Module posh-git
-
-# Open current directory in explorer when pressing Ctrl+E
-Set-PSReadLineKeyHandler -Key Ctrl+e -ScriptBlock { Invoke-Item . }
-
 Set-PSReadLineOption -EditMode Windows -PredictionSource History -PredictionViewStyle ListView
+
+Set-PSReadLineKeyHandler -Chord Ctrl+e -ScriptBlock { Invoke-Item . } -BriefDescription "Invoke-Item ." -Description "Open current directory in Explorer"
 
 # The Windows terminal does not use UTF-8 by default, the following line changes that
 # chcp 65001
 
 $script:bg = [Console]::BackgroundColor;
-$script:first = $true;
 $script:last = 0;
 
-function Write-PromptFancyEnd {
+function Write-DecoratedPromptEnd {
   Write-Host  -NoNewline -ForegroundColor $script:bg
 
   $script:bg = [System.ConsoleColor]::Black
@@ -149,9 +155,9 @@ function Write-PromptSegment {
   param(
     [Parameter(
       Position = 0,
-      Mandatory = $true,
-      ValueFromPipeline = $true,
-      ValueFromPipelineByPropertyName = $true
+      Mandatory,
+      ValueFromPipeline,
+      ValueFromPipelineByPropertyName
     )][string]$Text,
 
     [Parameter(Position = 1)][System.ConsoleColor] $Background = [Console]::BackgroundColor,
@@ -169,7 +175,7 @@ function Write-PromptSegment {
   $script:bg = $Background;
 }
 
-function Get-FancyDir {
+function Get-DecoratedPrompt {
   return $(Get-Location).ToString().Replace($env:USERPROFILE, '~').Replace('\', '  ');
 }
 
@@ -191,11 +197,7 @@ function Write-PromptStatus {
 }
 
 function Write-PromptUser {
-  if ($global:admin) {
-    Write-PromptSegment ' # ADMIN ' Magenta White;
-  } else {
-    Write-PromptSegment " $env:USERNAME " Yellow White;
-  }
+  Write-PromptSegment " $env:USERNAME " Yellow White;
 }
 
 function Write-PromptVirtualEnv {
@@ -204,8 +206,8 @@ function Write-PromptVirtualEnv {
   }
 }
 
-function Write-PromptDir {
-  Write-PromptSegment " $(Get-FancyDir) " DarkYellow White
+function Write-PromptDirectory {
+  Write-PromptSegment " $(Get-DecoratedPrompt) " DarkYellow White
 }
 
 # Depends on posh-git
@@ -215,8 +217,7 @@ function Write-PromptGit {
   }
 }
 
-function Get-PowerlineReference {
-  # Powerline character reference
+function Get-PowerlineGlyphs {
   Write-Host "                                     "
 }
 
@@ -227,10 +228,10 @@ function prompt {
   # Write-Host "$(((H)[-1].EndExecutionTime - (H)[-1].StartExecutionTime).Milliseconds) ms" -NoNewline -ForegroundColor Gray
 
   Write-PromptVirtualEnv
-  Write-PromptDir
+  Write-PromptDirectory
   Write-PromptGit
 
-  Write-PromptFancyEnd
+  Write-DecoratedPromptEnd
 
   # Load .env if there is one.
   Set-Env

@@ -30,16 +30,29 @@ function Mount-ExternalFileSystem {
 }
 
 function Add-BuildTools {
-  cmd.exe /c "call `"C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Auxiliary\Build\vcvars64.bat`" && set > %temp%\vcvars.txt"
+  [CmdletBinding()]
+  param(
+    [ValidateSet(2015, 2017, 2019, 2022)]
+    [int]
+    $Year = 2022
+  )
 
-  Get-Content "$env:temp\vcvars.txt" | ForEach-Object {
-    if ($_ -match "^(.*?)=(.*)$") {
-      Set-Content "env:\$($matches[1])" $matches[2]
+  $BuildToolsPath = "C:\Program Files (x86)\Microsoft Visual Studio\$Year\BuildTools\VC\Auxiliary\Build\vcvars64.bat"
+
+  if (Test-Path -Path $BuildToolsPath) {
+    cmd.exe /c "call `"$BuildToolsPath`" && set > %temp%\vcvars.txt"
+
+    Get-Content "$env:temp\vcvars.txt" | ForEach-Object {
+      if ($_ -match "^(.*?)=(.*)$") {
+        Set-Content "env:\$($matches[1])" $matches[2]
+      }
     }
+  } else {
+    throw "Could not find `"$BuildToolsPath`", are you sure you have VS Build Tools $Year installed?"
   }
 }
 
-# Credit to https://github.com/rajivharris/Set-PsEnv
+# Adapted from https://github.com/rajivharris/Set-PsEnv
 function Set-Env {
   [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Low')]
   param()
@@ -87,38 +100,38 @@ function Set-Env {
   }
 }
 
-# Due to iex being a default alias for Invoke-Expression I prefer to use this shorthand
-# because overwriting a default alias can have unwanted effects on external script execution
-function rex {
-  Invoke-Expression "iex.bat -S mix"
-}
+# # Due to iex being a default alias for Invoke-Expression I prefer to use this shorthand
+# # because overwriting a default alias can have unwanted effects on external script execution
+# function rex {
+#   Invoke-Expression "iex.bat -S mix"
+# }
 
-# Launches iex in separate erlang shell with proper support for UTF-8
-function wex {
-  Invoke-Expression "iex.bat --werl -S mix"
-}
+# # Launches iex in separate erlang shell with proper support for UTF-8
+# function wex {
+#   Invoke-Expression "iex.bat --werl -S mix"
+# }
 
-# Defines markdown rendered Elixir help depending on if you have glow installed or not
-if (Test-CommandExists "glow") {
-  # Prints documentation formatted with Glow for any Elixir function either in the console or the browser
-  function exh ([string] $Name = "h", [switch] $UseBrowser) {
-    if ($UseBrowser.IsPresent) {
-      Invoke-Expression "elixir -e 'import IEx.Helpers; h $Name'" | Out-String | Show-Markdown -UseBrowser
-    } else {
-      Invoke-Expression "elixir -e 'import IEx.Helpers; h $Name'" | Out-String | glow - -w 70
-    }
-  }
-} else {
-  # Prints documentation formatted with native Powershell functions for any Elixir function either in the console or the browser
-  function exh ([string] $Name = "h", [switch] $UseBrowser) {
-    if ($UseBrowser.IsPresent) {
-      Invoke-Expression "elixir -e 'import IEx.Helpers; h $Name'" | Out-String | Show-Markdown -UseBrowser
-    } else {
-      $text = Invoke-Expression "elixir -e 'import IEx.Helpers; h $Name'" | Out-String -Stream
-      $text.Split("\n") | ForEach-Object -Process { $_.Trim() } | Out-String | Show-Markdown
-    }
-  }
-}
+# # Defines markdown rendered Elixir help depending on if you have glow installed or not
+# if (Test-CommandExists "glow") {
+#   # Prints documentation formatted with Glow for any Elixir function either in the console or the browser
+#   function exh ([string] $Name = "h", [switch] $UseBrowser) {
+#     if ($UseBrowser.IsPresent) {
+#       Invoke-Expression "elixir -e 'import IEx.Helpers; h $Name'" | Out-String | Show-Markdown -UseBrowser
+#     } else {
+#       Invoke-Expression "elixir -e 'import IEx.Helpers; h $Name'" | Out-String | glow - -w 70
+#     }
+#   }
+# } else {
+#   # Prints documentation formatted with native Powershell functions for any Elixir function either in the console or the browser
+#   function exh ([string] $Name = "h", [switch] $UseBrowser) {
+#     if ($UseBrowser.IsPresent) {
+#       Invoke-Expression "elixir -e 'import IEx.Helpers; h $Name'" | Out-String | Show-Markdown -UseBrowser
+#     } else {
+#       $text = Invoke-Expression "elixir -e 'import IEx.Helpers; h $Name'" | Out-String -Stream
+#       $text.Split("\n") | ForEach-Object -Process { $_.Trim() } | Out-String | Show-Markdown
+#     }
+#   }
+# }
 
 # Open parent of given directory in explorer
 Set-Alias open Open-Directory -Option ReadOnly
@@ -135,9 +148,27 @@ function Open-Directory {
   }
 }
 
-Set-PSReadLineOption -EditMode Windows -PredictionSource History -PredictionViewStyle ListView
+# https://stackoverflow.com/a/31813329/17977931
+function Clear-LastCommand {
+  # Remove last entry from Powershell history
+  Clear-History -Count 1 -Newest
+
+  # Remove last entry from PSReadLine history
+  $HistoryFile = "$env:APPDATA\Microsoft\Windows\PowerShell\PSReadLine\$($host.Name)_history.txt"
+  $LinesInFile = [System.IO.File]::ReadAllLines($HistoryFile)
+  $DesiredLineCount = $LinesInFile.Count - 2
+
+  # Rewrite last line
+  $LinesInFile[$DesiredLineCount] = "Clear-LastCommand"
+
+  # Write all lines, except for the last one, back to the file
+  [System.IO.File]::WriteAllLines($HistoryFile, $LinesInFile[0..($DesiredLineCount)])
+}
+
+Set-PSReadLineOption -PredictionSource HistoryAndPlugin -PredictionViewStyle ListView
 
 Set-PSReadLineKeyHandler -Chord Ctrl+e -ScriptBlock { Invoke-Item . } -BriefDescription "Invoke-Item ." -Description "Open current directory in Explorer"
+Set-PSReadLineKeyHandler -Chord Alt+Delete -ScriptBlock { Clear-LastCommand } -BriefDescription "Clear-LastCommand" -Description "Delete last entry from history"
 
 # The Windows terminal does not use UTF-8 by default, the following line changes that
 # chcp 65001

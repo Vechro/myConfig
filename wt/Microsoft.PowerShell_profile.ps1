@@ -148,6 +148,21 @@ function Open-Directory {
   }
 }
 
+function InspectEnvPath {
+  [CmdletBinding()]
+  param(
+    [Parameter(ValueFromPipeline)]
+    [string] $PathVariable = $env:PATH
+  )
+
+  $entries = $PathVariable -split ';'
+  $invalid = $entries | Where-Object { !(Test-Path -Path $_) }
+  $invalid | ForEach-Object { [PSCustomObject]@{
+      Directory = if ($_ -eq '') { "'$_'" } else { $_ }
+      Exists    = $false
+    } } | Format-Table
+}
+
 # https://stackoverflow.com/a/31813329/17977931
 function Clear-LastCommand {
   # Remove last entry from Powershell history
@@ -165,9 +180,18 @@ function Clear-LastCommand {
   [System.IO.File]::WriteAllLines($HistoryFile, $LinesInFile[0..($DesiredLineCount)])
 }
 
+function Open-InWsl {
+  Start-Process pwsh.exe '-Command', {
+    wsl --cd "$PWD"
+    Read-Host
+  }
+}
+
 Set-PSReadLineOption -PredictionSource HistoryAndPlugin -PredictionViewStyle ListView
 
-Set-PSReadLineKeyHandler -Chord Ctrl+e -ScriptBlock { Invoke-Item . } -BriefDescription "Invoke-Item ." -Description "Open current directory in Explorer"
+Set-PSReadLineKeyHandler -Key Tab -Function MenuComplete
+Set-PSReadLineKeyHandler -Chord Alt+w -ScriptBlock { Open-InWsl } -BriefDescription "Open current directory in WSL" -Description "Open current directory in your default WSL distribution"
+Set-PSReadLineKeyHandler -Chord Alt+e -ScriptBlock { Invoke-Item . } -BriefDescription "Invoke-Item ." -Description "Open current directory in Explorer"
 Set-PSReadLineKeyHandler -Chord Alt+Delete -ScriptBlock { Clear-LastCommand } -BriefDescription "Clear-LastCommand" -Description "Delete last entry from history"
 
 # The Windows terminal does not use UTF-8 by default, the following line changes that

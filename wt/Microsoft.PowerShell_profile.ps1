@@ -30,6 +30,10 @@ function Mount-ExternalFileSystem {
 }
 
 function Add-BuildTools {
+  <#
+    .SYNOPSIS
+    Enables Visual Studio Build Tools in current session.
+  #>
   [CmdletBinding()]
   param(
     [ValidateSet(2015, 2017, 2019, 2022)]
@@ -54,6 +58,10 @@ function Add-BuildTools {
 
 # Adapted from https://github.com/rajivharris/Set-PsEnv
 function Set-Env {
+  <#
+    .SYNOPSIS
+    Parses and sets env variables from .env file in current working directory.
+  #>
   [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Low')]
   param()
 
@@ -133,9 +141,11 @@ function Set-Env {
 #   }
 # }
 
-# Open parent of given directory in explorer
-Set-Alias open Open-Directory -Option ReadOnly
 function Open-Directory {
+  <#
+    .SYNOPSIS
+    Opens provided path in Explorer.
+  #>
   [CmdletBinding()]
   param(
     [Parameter(Mandatory, ValueFromPipeline)]
@@ -147,8 +157,27 @@ function Open-Directory {
     Invoke-Item $Path
   }
 }
+Set-Alias open Open-Directory -Option ReadOnly
 
-function InspectEnvPath {
+function Open-InWsl {
+  <#
+    .SYNOPSIS
+    Opens current working directory in your default WSL distribution.
+  #>
+  Start-Process pwsh.exe '-Command', {
+    wsl --cd "$PWD"
+    Read-Host
+  }
+}
+
+function Debug-EnvPath {
+  <#
+    .SYNOPSIS
+    Inspects provided PATH variable for errors.
+
+    .OUTPUTS
+    Table of erroneous PATH entries with error type.
+  #>
   [CmdletBinding()]
   param(
     [Parameter(ValueFromPipeline)]
@@ -156,11 +185,23 @@ function InspectEnvPath {
   )
 
   $entries = $PathVariable -split ';'
-  $invalid = $entries | Where-Object { !(Test-Path -Path $_) }
-  $invalid | ForEach-Object { [PSCustomObject]@{
-      Directory = if ($_ -eq '') { "'$_'" } else { $_ }
-      Exists    = $false
-    } } | Format-Table
+  $entries
+  | ForEach-Object { $_.ToLower() }
+  | Group-Object
+  | ForEach-Object { if (!(Test-Path -Path $_.Name)) {
+      [PSCustomObject]@{
+        Directory = if ($_.Name -eq '') { "'$_.Name'" } else { $_.Name }
+        Type      = "Invalid"
+        Count     = $_.Count
+      }
+    } elseif ($_.Count -gt 1) {
+      [PSCustomObject]@{
+        Directory = $_.Name
+        Type      = "Duplicate"
+        Count     = $_.Count
+      }
+    } }
+  | Format-Table
 }
 
 # https://stackoverflow.com/a/31813329/17977931
@@ -178,13 +219,6 @@ function Clear-LastCommand {
 
   # Write all lines, except for the last one, back to the file
   [System.IO.File]::WriteAllLines($HistoryFile, $LinesInFile[0..($DesiredLineCount)])
-}
-
-function Open-InWsl {
-  Start-Process pwsh.exe '-Command', {
-    wsl --cd "$PWD"
-    Read-Host
-  }
 }
 
 Set-PSReadLineOption -PredictionSource HistoryAndPlugin -PredictionViewStyle ListView

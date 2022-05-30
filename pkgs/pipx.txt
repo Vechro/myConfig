@@ -11,4 +11,5 @@ proselint
 pywhat
 rembg
 scour
+pysrt
 srt3

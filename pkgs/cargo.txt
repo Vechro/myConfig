@@ -1,0 +1,15 @@
+binocle
+cargo-binutils
+cargo-edit
+cargo-expand
+cargo-llvm-lines
+cargo-udeps
+cargo-update
+cargo-watch
+difftastic
+flamegraph
+flowistry
+fnm
+mdbook
+pastel
+tokei

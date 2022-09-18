@@ -14,8 +14,6 @@ function Test-CommandExists ([string] $command) {
   finally { $ErrorActionPreference = $oldPreference }
 }
 
-New-Alias which Get-Command -Option ReadOnly
-
 function Mount-ExternalFileSystem {
   [CmdletBinding()]
   param(
@@ -111,20 +109,19 @@ function Set-Env {
 function Open-Directory {
   <#
     .SYNOPSIS
-    Opens provided path in Explorer.
+    Opens provided path in Explorer/Finder.
   #>
   [CmdletBinding()]
   param(
-    [Parameter(Mandatory, ValueFromPipeline)]
-    [string] $Path
+    [Parameter(ValueFromPipeline)]
+    [string] $Path = '.'
   )
-  if ((Get-Item $Path) -is [System.IO.FileInfo]) {
-    Split-Path $Path | Invoke-Item
-  } else {
+  if ([IO.Directory]::exists($Path)) {
     Invoke-Item $Path
+  } else {
+    [IO.Path]::GetDirectoryName($Path) | Invoke-Item
   }
 }
-Set-Alias open Open-Directory -Option ReadOnly
 
 function Open-InWsl {
   <#
@@ -141,7 +138,6 @@ function Debug-EnvPath {
   <#
     .SYNOPSIS
     Inspects provided PATH variable for errors.
-
     .OUTPUTS
     Table of erroneous PATH entries with error type.
   #>
@@ -150,9 +146,7 @@ function Debug-EnvPath {
     [Parameter(ValueFromPipeline)]
     [string] $PathVariable = $env:PATH
   )
-
-  $entries = $PathVariable -split ';'
-  $entries
+  $PathVariable -split [IO.Path]::PathSeparator
   | ForEach-Object { $_.ToLower() }
   | Group-Object
   | ForEach-Object { if (!(Test-Path -Path $_.Name)) {
@@ -171,126 +165,46 @@ function Debug-EnvPath {
   | Format-Table
 }
 
-# https://stackoverflow.com/a/31813329/17977931
-function Clear-LastCommand {
-  # Remove last entry from Powershell history
-  Clear-History -Count 1 -Newest
-
-  # Remove last entry from PSReadLine history
-  $HistoryFile = "$env:APPDATA\Microsoft\Windows\PowerShell\PSReadLine\$($host.Name)_history.txt"
-  $LinesInFile = [System.IO.File]::ReadAllLines($HistoryFile)
-  $DesiredLineCount = $LinesInFile.Count - 2
-
-  # Rewrite last line
-  $LinesInFile[$DesiredLineCount] = "Clear-LastCommand"
-
-  # Write all lines, except for the last one, back to the file
-  [System.IO.File]::WriteAllLines($HistoryFile, $LinesInFile[0..($DesiredLineCount)])
+$PSReadLineHistoryFilePath = switch ($true) {
+  $IsWindows { "$env:APPDATA\Microsoft\Windows\PowerShell\PSReadLine\$($host.Name)_history.txt" }
+  $IsMacOS { Resolve-Path "~/.local/share/powershell/PSReadLine/$($host.Name)_history.txt" }
 }
+
+function Clear-LastHistoryEntry {
+  <#
+    .SYNOPSIS
+    Removes last entry from PowerShell history.
+  #>
+  $HistorySavePath = Get-PSReadlineOption | Select-Object -ExpandProperty HistorySavePath
+  (Get-Content $HistorySavePath -Tail 2).Split([Environment]::NewLine) | Select-Object -First 1 | Clear-HistoryEntry
+}
+
+function Clear-HistoryEntry {
+  <#
+    .SYNOPSIS
+    Removes all history entries matching the argument exactly.
+  #>
+  [CmdletBinding()]
+  param(
+    [Parameter(Mandatory, ValueFromPipeline)]
+    [string] $Entry
+  )
+  Clear-History -CommandLine $Entry
+  $HistorySavePath = Get-PSReadlineOption | Select-Object -ExpandProperty HistorySavePath
+  Get-Content $HistorySavePath | Where-Object { $_ -ne $Entry } | Set-Content $HistorySavePath
+}
+
+New-Alias which Get-Command -Option ReadOnly
+New-Alias open Open-Directory -Option ReadOnly
 
 Set-PSReadLineOption -PredictionSource HistoryAndPlugin -PredictionViewStyle ListView
 
 Set-PSReadLineKeyHandler -Key Tab -Function MenuComplete
 Set-PSReadLineKeyHandler -Chord Alt+w -ScriptBlock { Open-InWsl } -BriefDescription "Open current directory in WSL" -Description "Open current directory in your default WSL distribution"
-Set-PSReadLineKeyHandler -Chord Alt+e -ScriptBlock { Invoke-Item . } -BriefDescription "Invoke-Item ." -Description "Open current directory in Explorer"
+Set-PSReadLineKeyHandler -Chord Alt+e -ScriptBlock { Invoke-Item . } -BriefDescription "Invoke-Item ." -Description "Open current directory in Explorer/Finder"
 Set-PSReadLineKeyHandler -Chord Alt+Delete -ScriptBlock { Clear-LastCommand } -BriefDescription "Clear-LastCommand" -Description "Delete last entry from history"
 
 # The Windows terminal does not use UTF-8 by default, the following line changes that
 # chcp 65001
 
-$script:bg = [Console]::BackgroundColor;
-$script:last = 0;
-
-function Write-DecoratedPromptEnd {
-  Write-Host  -NoNewline -ForegroundColor $script:bg
-
-  $script:bg = [System.ConsoleColor]::Black
-}
-
-function Write-PromptSegment {
-  param(
-    [Parameter(
-      Position = 0,
-      Mandatory,
-      ValueFromPipeline,
-      ValueFromPipelineByPropertyName
-    )][string]$Text,
-
-    [Parameter(Position = 1)][System.ConsoleColor] $Background = [Console]::BackgroundColor,
-    [Parameter(Position = 2)][System.ConsoleColor] $Foreground = [System.ConsoleColor]::White
-  )
-
-  if (!$script:first) {
-    Write-Host  -NoNewline -BackgroundColor $Background -ForegroundColor $script:bg
-  } else {
-    $script:first = $false
-  }
-
-  Write-Host $Text -NoNewline -BackgroundColor $Background -ForegroundColor $Foreground
-
-  $script:bg = $Background;
-}
-
-function Get-DecoratedPrompt {
-  return $(Get-Location).ToString().Replace($env:USERPROFILE, '~').Replace('\', '  ');
-}
-
-function Get-GitBranch {
-  $HEAD = Get-Content $(Join-Path $(Get-GitDirectory) HEAD)
-  if ($HEAD -like 'ref: refs/heads/*') {
-    return $HEAD -replace 'ref: refs/heads/(.*?)', "$1";
-  } else {
-    return $HEAD.Substring(0, 8);
-  }
-}
-
-function Write-PromptStatus {
-  if ($script:last) {
-    Write-PromptSegment ' ✅ ' Green Black
-  } else {
-    Write-PromptSegment " ❌ $lastexitcode " Red White
-  }
-}
-
-function Write-PromptUser {
-  Write-PromptSegment " $env:USERNAME " Yellow White;
-}
-
-function Write-PromptVirtualEnv {
-  if ($env:VIRTUAL_ENV) {
-    Write-PromptSegment " $(Split-Path $env:VIRTUAL_ENV -Leaf) " Cyan Black
-  }
-}
-
-function Write-PromptDirectory {
-  Write-PromptSegment " $(Get-DecoratedPrompt) " DarkYellow White
-}
-
-# Depends on posh-git
-function Write-PromptGit {
-  if (Get-GitDirectory) {
-    Write-PromptSegment "  $(Get-GitBranch) " Blue White
-  }
-}
-
-function Get-PowerlineGlyphs {
-  "                                     "
-}
-
-function prompt {
-  $script:last = $?;
-  $script:first = $true;
-
-  # Write-Host "$(((H)[-1].EndExecutionTime - (H)[-1].StartExecutionTime).Milliseconds) ms" -NoNewline -ForegroundColor Gray
-
-  Write-PromptVirtualEnv
-  Write-PromptDirectory
-  Write-PromptGit
-
-  Write-DecoratedPromptEnd
-
-  # Load .env if there is one.
-  Set-Env
-
-  return ' '
-}
+Invoke-Expression (&starship init powershell)

@@ -12,4 +12,5 @@ flowistry
 fnm
 mdbook
 pastel
+starship
 tokei

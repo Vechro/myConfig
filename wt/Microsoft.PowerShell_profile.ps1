@@ -165,11 +165,6 @@ function Debug-EnvPath {
   | Format-Table
 }
 
-$PSReadLineHistoryFilePath = switch ($true) {
-  $IsWindows { "$env:APPDATA\Microsoft\Windows\PowerShell\PSReadLine\$($host.Name)_history.txt" }
-  $IsMacOS { Resolve-Path "~/.local/share/powershell/PSReadLine/$($host.Name)_history.txt" }
-}
-
 function Clear-LastHistoryEntry {
   <#
     .SYNOPSIS

@@ -12,6 +12,28 @@ format = " "
 [line_break]
 disabled = true
 
+[c]
+version_format = "${raw}"
+style = "bright-green"
+format = "[ $symbol($version(-$name) )](bg:$style fg:black)[](bg:black fg:$style)"
+
+[cmake]
+symbol = "cmake "
+version_format = "${raw}"
+style = "blue"
+format = "[ $symbol($version )](bg:$style fg:black)[](bg:black fg:$style)"
+
+[cmd_duration]
+disabled = true
+style = "green"
+format = "[ ~$duration ](bg:$style fg:black)[](bg:black fg:$style)"
+
+[dart]
+symbol = "dart "
+version_format = "${raw}"
+style = "blue"
+format = "[ $symbol($version )](bg:$style fg:black)[](bg:black fg:$style)"
+
 [directory]
 truncate_to_repo = false
 style = "cyan"
@@ -46,29 +68,42 @@ modified = "M"
 style = "bright-purple"
 format = "([ ($ahead_behind )](bg:$style fg:black)[](bg:black fg:$style))"
 
+[golang]
+symbol = "go "
+version_format = "${raw}"
+style = "blue"
+format = "[ $symbol($version )](bg:$style fg:black)[](bg:black fg:$style)"
+
 [java]
 symbol = "java "
 version_format = "${raw}"
 style = "red"
-format = "[ $symbol$version ](bg:$style fg:black)[](bg:black fg:$style)"
+format = "[ $symbol($version )](bg:$style fg:black)[](bg:black fg:$style)"
 
 [kotlin]
 symbol = "kt "
 version_format = "${raw}"
 style = "blue"
-format = "[ $symbol$version ](bg:$style fg:black)[](bg:black fg:$style)"
-
-[cmd_duration]
-disabled = true
-style = "green"
-format = "[ ~$duration ](bg:$style fg:black)[](bg:black fg:$style)"
+format = "[ $symbol($version )](bg:$style fg:black)[](bg:black fg:$style)"
 
 [nodejs]
 symbol = "node "
 version_format = "${raw}"
 style = "green"
-format = "[ $symbol$version ](bg:$style fg:black)[](bg:black fg:$style)"
+format = "[ $symbol($version )](bg:$style fg:black)[](bg:black fg:$style)"
 
 [package]
-style = "bright-yellow"
-format = "[ $symbol$version ](bg:$style fg:black)[](bg:black fg:$style)"
+style = "white"
+format = "[ $symbol($version )](bg:$style fg:black)[](bg:black fg:bold white)"
+
+[python]
+symbol = "py "
+version_format = "${raw}"
+style = "bright-cyan"
+format = "[ $symbol($version )](bg:$style fg:black)[](bg:black fg:$style)"
+
+[rust]
+symbol = "rust "
+version_format = "${raw}"
+style = "red"
+format = "[ $symbol($version )](bg:$style fg:black)[](bg:black fg:$style)"

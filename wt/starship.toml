@@ -46,13 +46,26 @@ modified = "M"
 style = "bright-purple"
 format = "([ ($ahead_behind )](bg:$style fg:black)[](bg:black fg:$style))"
 
+[java]
+symbol = "java "
+version_format = "${raw}"
+style = "red"
+format = "[ $symbol$version ](bg:$style fg:black)[](bg:black fg:$style)"
+
+[kotlin]
+symbol = "kt "
+version_format = "${raw}"
+style = "blue"
+format = "[ $symbol$version ](bg:$style fg:black)[](bg:black fg:$style)"
+
 [cmd_duration]
 disabled = true
 style = "green"
 format = "[ ~$duration ](bg:$style fg:black)[](bg:black fg:$style)"
 
 [nodejs]
-symbol = "⬢ "
+symbol = "node "
+version_format = "${raw}"
 style = "green"
 format = "[ $symbol$version ](bg:$style fg:black)[](bg:black fg:$style)"
 

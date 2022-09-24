@@ -181,3 +181,4 @@ Set-PSReadLineKeyHandler -Chord Alt+Delete -ScriptBlock { Clear-LastCommand } -B
 # chcp 65001
 
 Invoke-Expression (&starship init powershell)
+fnm env --use-on-cd | Out-String | Invoke-Expression

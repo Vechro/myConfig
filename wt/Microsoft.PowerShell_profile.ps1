@@ -1,6 +1,3 @@
-using namespace System.Management.Automation
-using namespace System.Management.Automation.Language
-
 Import-Module posh-git
 Import-Module PSReadLine
 
@@ -34,7 +31,7 @@ function Add-BuildTools {
   #>
   [CmdletBinding()]
   param(
-    [ValidateSet(2015, 2017, 2019, 2022)]
+    [ValidateSet(2017, 2019, 2022)]
     [int]
     $Year = 2022
   )
@@ -61,47 +58,28 @@ function Set-Env {
     Parses and sets env variables from .env file in current working directory.
   #>
   [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Low')]
-  param()
+  param(
+    [Parameter(ValueFromPipeline)]
+    [string] $EnvFile = '.\.env'
+  )
 
-  if ($Global:PreviousDir -eq (Get-Location).Path) {
-    Write-Verbose "Set-Env: Skipping same directory"
-    return
-  } else {
-    $Global:PreviousDir = (Get-Location).Path
-  }
-
-  # Return if no env file
-  if (!(Test-Path ".\.env")) {
-    Write-Verbose "No .env file"
-    return
-  }
-
-  # Read the local env file
-  $content = Get-Content ".\.env" -ErrorAction Stop
+  $Content = Get-Content $EnvFile -ErrorAction Stop
   Write-Verbose "Parsed .env file"
 
   # Load the content to environment
-  foreach ($line in $content) {
-
-    if ([string]::IsNullOrWhiteSpace($line)) {
+  foreach ($Line in $Content) {
+    if ([string]::IsNullOrWhiteSpace($Line)) {
       Write-Verbose "Skipping empty line"
       continue
     }
-
-    # Ignore comments
-    if ($line.StartsWith("#")) {
-      Write-Verbose "Skipping comment: $line"
+    if ($Line.StartsWith("#")) {
+      Write-Verbose "Skipping comment: $Line"
       continue
     }
-
-    $kvp = $line -split "=", 2
-    $key = $kvp[0].Trim()
-    $value = $kvp[1].Trim()
-
-    Write-Verbose "$key=$value"
-
-    if ($PSCmdlet.ShouldProcess("environment variable $key", "set value $value")) {
-      [Environment]::SetEnvironmentVariable($key, $value, "Process") | Out-Null
+    $Key, $Value = $Line -split "=", 2 | ForEach-Object Trim
+    Write-Verbose "$Key=$Value"
+    if ($PSCmdlet.ShouldProcess("Environment variable $Key", "Set value $Value")) {
+      [Environment]::SetEnvironmentVariable($Key, $Value, "Process") | Out-Null
     }
   }
 }
@@ -147,7 +125,7 @@ function Debug-EnvPath {
     [string] $PathVariable = $env:PATH
   )
   $PathVariable -split [IO.Path]::PathSeparator
-  | ForEach-Object { $_.ToLower() }
+  | ForEach-Object ToLower
   | Group-Object
   | ForEach-Object { if (!(Test-Path -Path $_.Name)) {
       [PSCustomObject]@{
@@ -170,7 +148,7 @@ function Clear-LastHistoryEntry {
     .SYNOPSIS
     Removes last entry from PowerShell history.
   #>
-  $HistorySavePath = Get-PSReadlineOption | Select-Object -ExpandProperty HistorySavePath
+  $HistorySavePath = (Get-PSReadLineOption).HistorySavePath
   (Get-Content $HistorySavePath -Tail 2).Split([Environment]::NewLine) | Select-Object -First 1 | Clear-HistoryEntry
 }
 
@@ -185,12 +163,12 @@ function Clear-HistoryEntry {
     [string] $Entry
   )
   Clear-History -CommandLine $Entry
-  $HistorySavePath = Get-PSReadlineOption | Select-Object -ExpandProperty HistorySavePath
+  $HistorySavePath = (Get-PSReadLineOption).HistorySavePath
   Get-Content $HistorySavePath | Where-Object { $_ -ne $Entry } | Set-Content $HistorySavePath
 }
 
-New-Alias which Get-Command -Option ReadOnly
-New-Alias open Open-Directory -Option ReadOnly
+Set-Alias which Get-Command -Option ReadOnly
+Set-Alias open Open-Directory -Option ReadOnly
 
 Set-PSReadLineOption -PredictionSource HistoryAndPlugin -PredictionViewStyle ListView
 

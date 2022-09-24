@@ -12,5 +12,6 @@ flowistry
 fnm
 mdbook
 pastel
+ripgrep
 starship
 tokei

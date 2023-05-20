@@ -1,9 +1,5 @@
 // npm list -g --depth=0
 
-npx
 glyphhanger
 npm-check-updates
-postcss
-postcss-cli
 subfont
-tldr

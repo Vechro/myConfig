@@ -36,17 +36,16 @@ format = "[ $symbol($version )](bg:$style fg:black)[](bg:black fg:$style)"
 
 [directory]
 truncate_to_repo = false
+truncation_length = 0
 style = "cyan"
 format = "[ $path ](bg:$style fg:black)[](bg:black fg:$style)"
-substitutions = { "/" = "  " }
 
 [git_branch]
 style = "purple"
 format = "[ $symbol$branch(:$remote_branch) ](bg:$style fg:black)[](bg:black fg:$style)"
 
 [git_commit]
-# Not sure what this does
-tag_disabled = false
+tag_symbol = " 🔖"
 style = "yellow"
 format = "[ $hash$tag ](bg:$style fg:black)[](bg:black fg:$style)"
 
@@ -74,6 +73,12 @@ version_format = "${raw}"
 style = "blue"
 format = "[ $symbol($version )](bg:$style fg:black)[](bg:black fg:$style)"
 
+[gradle]
+symbol = "gradle "
+version_format = "${raw}"
+style = "30"
+format = "[ $symbol($version )](bg:$style fg:black)[](bg:black fg:$style)"
+
 [java]
 symbol = "java "
 version_format = "${raw}"
@@ -83,7 +88,7 @@ format = "[ $symbol($version )](bg:$style fg:black)[](bg:black fg:$style)"
 [kotlin]
 symbol = "kt "
 version_format = "${raw}"
-style = "blue"
+style = "162"
 format = "[ $symbol($version )](bg:$style fg:black)[](bg:black fg:$style)"
 
 [nodejs]
@@ -93,7 +98,7 @@ style = "green"
 format = "[ $symbol($version )](bg:$style fg:black)[](bg:black fg:$style)"
 
 [package]
-style = "white"
+style = "bright-black"
 format = "[ $symbol($version )](bg:$style fg:black)[](bg:black fg:$style)"
 
 [python]
@@ -102,8 +107,14 @@ version_format = "${raw}"
 style = "bright-cyan"
 format = "[ $symbol($version )](bg:$style fg:black)[](bg:black fg:$style)"
 
-[rust]
-symbol = "rust "
+[ruby]
+symbol = "rb "
 version_format = "${raw}"
 style = "red"
+format = "[ $symbol($version )](bg:$style fg:black)[](bg:black fg:$style)"
+
+[rust]
+symbol = "rs "
+version_format = "${raw}"
+style = "130"
 format = "[ $symbol($version )](bg:$style fg:black)[](bg:black fg:$style)"
